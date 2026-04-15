@@ -1,13 +1,17 @@
 import datetime
 import json
-class todoTasks:
-    now = datetime.datetime.now()
-    onlyDate = now.date()
+class TodoTasks:
+    parser = argparse.ArgumentParser(description="Values for adding tasks")
+    parser.add_argument("taskTitle", help="Title of the task") 
+    parser.add_argument("completeBy", help="Task due date") 
+
     def __init__(self):
         self.tasks = self.loadFile()
 
         
     def addTask(self, taskTitle, completeBy):
+        now = datetime.datetime.now()
+        onlyDate = now.date()
         jsonValue = {
             "id": self.getNextId(),
             "taskTitle" : taskTitle,
@@ -17,8 +21,15 @@ class todoTasks:
         }
         self.tasks.append(jsonValue)
         self.writeToFile(self.tasks)
-        self.__str__(jsonValue)
-    
+        self.displayTask(jsonValue)
+        
+    def listTasks(self):
+        if not self.tasks:
+           print("No tasks found")
+           return
+        for task in self.tasks:
+           self.displayTask(task)
+            
     def delById(self, delId):
         allTasks = self.tasks
         if not allTasks:
@@ -73,20 +84,12 @@ class todoTasks:
         try:
             with open("tasks.json","w") as f:
                 json.dump(tasks, f, indent=2)
-        except:
-            print("Error occured while writing") 
-    def __del__(self):
-    # Close file when object is destroyed
-        if hasattr(self, 'file'):
-            self.file.close()
+        except IOError as e:
+               print(f"Error writing to file: {e}")
     
-    def __str__(self,task):
+    def displayTask(self,task):
         if task["taskStatus"] == "Completed":
             print("✅", end=" ")
         else:
             print("❌", end=" ")
         print(task["id"],task["taskTitle"],task["createdAt"],task["completeBy"])
-todo = todoTasks()
-print(todo.addTask("Buy groceries", "2026-04-20"))
-todo.delById(2)
-todo.updateStatus(5)
