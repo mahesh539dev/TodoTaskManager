@@ -1,43 +1,7 @@
 import datetime
 import json
 import argparse
-def main():
-    todo = TodoTasks()
 
-    parser = argparse.ArgumentParser(description="Todo Task Manager")
-    subparsers = parser.add_subparsers(dest="command")
-
-    # add
-    add_parser = subparsers.add_parser("add")
-    add_parser.add_argument("title", help="Task title")
-    add_parser.add_argument("due", help="Due date e.g. 2026-04-20")
-
-    # list
-    subparsers.add_parser("list")
-
-    # delete
-    del_parser = subparsers.add_parser("delete")
-    del_parser.add_argument("id", type=int, help="Task ID")
-
-    # complete
-    comp_parser = subparsers.add_parser("complete")
-    comp_parser.add_argument("id", type=int, help="Task ID")
-
-    args = parser.parse_args()
-
-    if args.command == "add":
-        todo.addTask(args.title, args.due)
-    elif args.command == "list":
-        todo.listTasks()
-    elif args.command == "delete":
-        todo.delById(args.id)
-    elif args.command == "complete":
-        todo.updateStatus(args.id)
-    else:
-        parser.print_help()
-
-if __name__ == "__main__":
-    main()
 class TodoTasks:
     def __init__(self):
         self.tasks = self.loadFile()
@@ -50,7 +14,7 @@ class TodoTasks:
             "id": self.getNextId(),
             "taskTitle" : taskTitle,
             "taskStatus" : "PENDING",
-            "createdAt" : str(self.onlyDate),
+            "createdAt" : str(onlyDate),
             "completeBy" : completeBy
         }
         self.tasks.append(jsonValue)
@@ -101,11 +65,11 @@ class TodoTasks:
         if not allTasks:
             return 1
         else:
-            max = 0
+            max_id = 0
             for task in allTasks:
-                if task['id'] > max:
-                    max = task['id']
-            return max+1
+                if task['id'] > max_id:
+                    max_id = task['id']
+            return max_id+1
         
     def loadFile(self):
         try:
@@ -127,3 +91,40 @@ class TodoTasks:
         else:
             print("❌", end=" ")
         print(task["id"],task["taskTitle"],task["createdAt"],task["completeBy"])
+def main():
+    todo = TodoTasks()
+
+    parser = argparse.ArgumentParser(description="Todo Task Manager")
+    subparsers = parser.add_subparsers(dest="command")
+
+    # add
+    add_parser = subparsers.add_parser("add")
+    add_parser.add_argument("title", help="Task title")
+    add_parser.add_argument("due", help="Due date e.g. 2026-04-20")
+
+    # list
+    subparsers.add_parser("list")
+
+    # delete
+    del_parser = subparsers.add_parser("delete")
+    del_parser.add_argument("id", type=int, help="Task ID")
+
+    # complete
+    comp_parser = subparsers.add_parser("complete")
+    comp_parser.add_argument("id", type=int, help="Task ID")
+
+    args = parser.parse_args()
+
+    if args.command == "add":
+        todo.addTask(args.title, args.due)
+    elif args.command == "list":
+        todo.listTasks()
+    elif args.command == "delete":
+        todo.delById(args.id)
+    elif args.command == "complete":
+        todo.updateStatus(args.id)
+    else:
+        parser.print_help()
+
+if __name__ == "__main__":
+    main()
