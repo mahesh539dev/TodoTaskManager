@@ -17,7 +17,7 @@ class todoTasks:
         }
         self.tasks.append(jsonValue)
         self.writeToFile(self.tasks)
-        return json.dumps(jsonValue)
+        self.__str__(jsonValue)
     
     def delById(self, delId):
         allTasks = self.tasks
@@ -79,8 +79,13 @@ class todoTasks:
     # Close file when object is destroyed
         if hasattr(self, 'file'):
             self.file.close()
-            
-            
+    
+    def __str__(self,task):
+        if task["taskStatus"] == "Completed":
+            print("✅", end=" ")
+        else:
+            print("❌", end=" ")
+        print(task["id"],task["taskTitle"],task["createdAt"],task["completeBy"])
 todo = todoTasks()
 print(todo.addTask("Buy groceries", "2026-04-20"))
 todo.delById(2)
